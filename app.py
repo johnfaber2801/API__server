@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import date
 from flask_bcrypt import Bcrypt
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 # set the database URI via SQLAlchemy, 
@@ -12,6 +13,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 #create the database object
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+ma = Marshmallow(app)
 
 class User(db.Model):
     # define the table name for the db
@@ -23,6 +25,20 @@ class User(db.Model):
     username = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+
+#Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'email', 'username', 'password')
+
+
+@app.route('/users')
+def all_users():
+    stmt= db.select(User)
+    users = db.session.scalars(stmt).all()
+    return UserSchema(many=True).dump(users)
+                                 # "dump" will return the fields in JSON format 
+
 
 class Card(db.Model):
     # define the table name for the db
@@ -39,6 +55,19 @@ class Card(db.Model):
     market_price = db.Column(db.Integer())
     date = db.Column(db.Date())
 
+#Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
+class CardSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'type', 'set', 'description', 'purchased_price','market_price', 'date')
+
+
+@app.route('/cards')
+def all_cards():
+    stmt= db.select(Card)# select all cards from Card Model
+    cards = db.session.scalars(stmt).all()
+    return CardSchema(many=True).dump(cards)
+                                 # "dump" will return the fields in JSON format   
+
 class Grading(db.Model):
     # define the table name for the db
     __tablename__= "gradings"
@@ -49,6 +78,19 @@ class Grading(db.Model):
     graded_by = db.Column(db.String(), nullable=False)
     certification = db.Column(db.String(), nullable=False)
 
+#Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
+class GradingSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'score', 'graded_by', 'certifcation')
+
+
+@app.route('/gradings')
+def all_gradings():
+    stmt= db.select(Grading) # select all users from Grading Model
+    gradings = db.session.scalars(stmt).all()
+    return GradingSchema(many=True).dump(gradings)
+                                 # "dump" will return the fields in JSON format 
+
 class Collection(db.Model):
     # define the table name for the db
     __tablename__= "collections"
@@ -56,6 +98,19 @@ class Collection(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     # rest of the attributes.
     collection_name= db.Column(db.String())
+
+#Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
+class CollectionSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'collection_name')
+
+
+@app.route('/collections')
+def all_collections():
+    stmt= db.select(Collection) # select all users from Grading Model
+    collections = db.session.scalars(stmt).all()
+    return CollectionSchema(many=True).dump(collections)
+                                 # "dump" will return the fields in JSON format 
 
 @app.cli.command("create")
 def create_db():
@@ -143,6 +198,9 @@ def db_seed():
 def drop_db():
     db.drop_all()
     print("Tables dropped") 
+
+
+    
 
 
 @app.route("/")
