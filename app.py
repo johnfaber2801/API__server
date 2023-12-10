@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import date
 from flask_bcrypt import Bcrypt
@@ -31,13 +31,32 @@ class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'email', 'username', 'password')
 
-
+#get all users from the database
 @app.route('/users')
 def all_users():
     stmt= db.select(User)
     users = db.session.scalars(stmt).all()
     return UserSchema(many=True).dump(users)
                                  # "dump" will return the fields in JSON format 
+
+# register new users 
+@app.route('/users/register', methods=['POST'])
+def register():
+    #parse incoming POST body through the schema
+    user_info = UserSchema().load(request.json)
+    #create a new user with the parsed data
+    user = User(
+        email=user_info['email'],
+        username=user_info['username'],
+        password=bcrypt.generate_password_hash(user_info['password']).decode('utf8')
+    )
+    #add and commit the new user to the database
+    db.session.add(user)
+    db.session.commit()
+
+    #return new user                                  # 201 creation successful
+    return UserSchema(exclude=['password','id']).dump(user), 201
+                     #password and ID wont be retrieved to new users             
 
 
 class Card(db.Model):
@@ -119,7 +138,7 @@ def create_db():
 
 @app.cli.command("seed")
 def db_seed():
-    # Users 
+    # cards 
     cards = [
          Card(
             name = "Charizard #1",
@@ -153,7 +172,7 @@ def db_seed():
             email="admin@spam.com",
             username="jefe",
             password=bcrypt.generate_password_hash("spinynorman").decode("utf8"),
-            is_admin=True,
+            is_admin=True,   #industry standars of how to store a password.
         ),
     #db.session.add(user1)
 
@@ -161,7 +180,7 @@ def db_seed():
             email="rodriguez@spam.com",
             username="collector2023",
             password=bcrypt.generate_password_hash("tisbutascratch").decode("utf8"),
-        )
+        )                  #industry standars of how to store a password.               
     ]
 
     db.session.add_all(users)
