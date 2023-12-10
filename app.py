@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from flask_bcrypt import Bcrypt
 from flask_marshmallow import Marshmallow
 from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 app = Flask(__name__)
 
@@ -35,11 +35,18 @@ class User(db.Model):
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'email', 'username', 'password')
+        fields = ('id', 'email', 'username', 'password', 'is_admin')
 
 #get all users from the database
 @app.route('/users')
+@jwt_required()
 def all_users():
+    admin_email = get_jwt_identity()
+    stmt = db.select(User).where(User.email == admin_email)
+    user = db.session.scalar(stmt)
+    if not user.is_admin:
+        return {'error': 'You must be an admin'}, 401
+
     stmt= db.select(User)
     users = db.session.scalars(stmt).all()
     return UserSchema(many=True).dump(users)
@@ -50,7 +57,7 @@ def all_users():
 def register():
     try:
         #parse incoming POST body through the schema
-        user_info = UserSchema().load(request.json)
+        user_info = UserSchema(exclude=['id','is_admin']).load(request.json)
         #create a new user with the parsed data
         user = User(
             email=user_info['email'],
