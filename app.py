@@ -1,10 +1,15 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy 
-from datetime import date
+from datetime import date, timedelta
 from flask_bcrypt import Bcrypt
 from flask_marshmallow import Marshmallow
+from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 
 app = Flask(__name__)
+
+app.config['JWT_SECRET_KEY'] = "pair of queens"
+
 # set the database URI via SQLAlchemy, 
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://pokemon_dev:123456@localhost:5432/pokemon_db"
 
@@ -14,6 +19,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 ma = Marshmallow(app)
+jwt = JWTManager(app)
 
 class User(db.Model):
     # define the table name for the db
@@ -42,21 +48,47 @@ def all_users():
 # register new users 
 @app.route('/users/register', methods=['POST'])
 def register():
-    #parse incoming POST body through the schema
-    user_info = UserSchema().load(request.json)
-    #create a new user with the parsed data
-    user = User(
-        email=user_info['email'],
-        username=user_info['username'],
-        password=bcrypt.generate_password_hash(user_info['password']).decode('utf8')
-    )
-    #add and commit the new user to the database
-    db.session.add(user)
-    db.session.commit()
+    try:
+        #parse incoming POST body through the schema
+        user_info = UserSchema().load(request.json)
+        #create a new user with the parsed data
+        user = User(
+            email=user_info['email'],
+            username=user_info['username'],
+            password=bcrypt.generate_password_hash(user_info['password']).decode('utf8')
+        )
+        #add and commit the new user to the database
+        db.session.add(user)
+        db.session.commit()
 
-    #return new user                                  # 201 creation successful
-    return UserSchema(exclude=['password','id']).dump(user), 201
-                     #password and ID wont be retrieved to new users             
+        #return new user                                  # 201 creation successful
+        return UserSchema(exclude=['password','id']).dump(user), 201
+                        #password and ID wont be retrieved to new users
+    except IntegrityError as e:
+        # Check if the error is due to duplicate email
+        if 'unique constraint' in str(e.orig) and 'email' in str(e.orig):
+            return {'error': 'Email is already in use'}, 409
+        # Check if the error is due to duplicate username
+        elif 'unique constraint' in str(e.orig) and 'username' in str(e.orig):
+            return {'error': 'Username is already in use'}, 409
+
+#login route                
+@app.route('/users/login', methods=['POST'])
+def login():
+    #parse incoming POST body through the schema
+    user_info = UserSchema(only=['email','password']).load(request.json)
+    #select user with email that matches the one in the POST body
+    stmt = db.select(User).where(User.email==user_info['email'])
+    user = db.session.scalar(stmt)  
+    #check password hash #bcrypt will do the work for us of matching password from database and incoming one
+    if user and bcrypt.check_password_hash(user.password, user_info['password']):
+        #create a JWT token
+        token = create_access_token(identity=user.email,expires_delta=timedelta(hours=12))
+        #return the JWT token
+        return {'token': token, 'user':UserSchema(exclude=['password']).dump(user)}
+    else:
+        return {'error': 'invalid email or password'},401
+
 
 
 class Card(db.Model):
@@ -81,6 +113,7 @@ class CardSchema(ma.Schema):
 
 
 @app.route('/cards')
+@jwt_required()
 def all_cards():
     stmt= db.select(Card)# select all cards from Card Model
     cards = db.session.scalars(stmt).all()
