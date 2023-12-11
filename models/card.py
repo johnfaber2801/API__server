@@ -1,4 +1,5 @@
 from setup import db, ma
+from datetime import datetime
 
 class Card(db.Model):
     # define the table name for the db
@@ -13,9 +14,9 @@ class Card(db.Model):
     quantity = db.Column(db.Integer(), nullable= False)
     purchased_price = db.Column(db.Integer())
     market_price = db.Column(db.Integer())
-    date = db.Column(db.Date())
+    date = db.Column(db.Date(), default=datetime.now().strftime('%Y-%m-%d'))
 
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class CardSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'type', 'set', 'description', 'purchased_price','market_price', 'date')
+        fields = ('id', 'name', 'type', 'set', 'condition','quantity', 'purchased_price','market_price', 'date')
