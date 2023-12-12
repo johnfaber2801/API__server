@@ -1,4 +1,5 @@
 from setup import db, ma
+from marshmallow import fields
 
 class Collection(db.Model):
     # define the table name for the db
@@ -10,5 +11,6 @@ class Collection(db.Model):
 
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class CollectionSchema(ma.Schema):
+ 
     class Meta:
         fields = ('id', 'collection_name')

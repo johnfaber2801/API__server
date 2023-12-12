@@ -8,15 +8,16 @@ from models.user import User, UserSchema
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
-#get all users from the database
+
+# Get all users
 @users_bp.route('/')
 @jwt_required()
 def all_users():
     admin_required()
-    stmt= db.select(User)
+    stmt= db.select(User)# select all cards from User Model
     users = db.session.scalars(stmt).all()
-    return UserSchema(many=True).dump(users)
-                                 # "dump" will return the fields in JSON format 
+    return UserSchema(many=True,exclude=['password']).dump(users)
+                                 # "dump" will return the fields in JSON format                           
 
 # register new users 
 @users_bp.route('/register', methods=['POST'])
@@ -56,8 +57,11 @@ def login():
     #check password hash #bcrypt will do the work for us of matching password from database and incoming one
     if user and bcrypt.check_password_hash(user.password, user_info['password']):
         #create a JWT token
-        token = create_access_token(identity=user.email,expires_delta=timedelta(hours=12))
+        token = create_access_token(identity=user.id,expires_delta=timedelta(hours=12))
         #return the JWT token
-        return {'token': token, 'user':UserSchema(exclude=['password']).dump(user)}
+        return {'token': token, 'user':UserSchema(exclude=['password','cards']).dump(user)}
     else:
         return {'error': 'invalid email or password'},401
+    
+
+

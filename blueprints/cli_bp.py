@@ -16,35 +16,7 @@ def create_db():
 
 @db_commands.cli.command("seed")
 def db_seed():
-    # cards 
-    cards = [
-         Card(
-            name = "Charizard #1",
-            type = "fire",
-            set = "25th Anniversary promo",
-            condition= "near mint",
-            quantity = 1,
-            purchased_price = 180,
-            market_price = 195,
-            date = date.today()
-        ),
-    # db.session.add(card1)
-
-          Card(
-            name = "Imposter Professor Oak #4",
-            type = "Trainer",
-            set = "25th Anniversary promo",
-            condition= "Little played",
-            quantity = 1,
-            purchased_price = 4,
-            market_price = 5.5,
-            date = date.today()
-        )
-    ]
-    # db.session.add(card2)
-    db.session.add_all(cards)
-    db.session.commit()
-
+    #users
     users =[
         User(
             email="admin@spam.com",
@@ -65,6 +37,56 @@ def db_seed():
     db.session.commit()
     #db.session.add(user2)
 
+    # cards 
+    cards = [
+         Card(
+            name = "Charizard #1",
+            type = "fire",
+            set = "25th Anniversary promo",
+            condition= "near mint",
+            quantity = 1,
+            purchased_price = 180,
+            market_price = 195,
+            date = date.today(),
+            user_id = users[0].id
+        ),
+    # db.session.add(card1)
+
+          Card(
+            name = "Imposter Professor Oak #4",
+            type = "Trainer",
+            set = "25th Anniversary promo",
+            condition= "Little played",
+            quantity = 1,
+            purchased_price = 4,
+            market_price = 5.5,
+            date = date.today(),
+            user_id = users[1].id
+        )
+    ]
+    # db.session.add(card2)
+    db.session.add_all(cards)
+    db.session.commit()
+
+    #graded card sets
+    gradings = [
+        Grading(
+        score = 9,
+        graded_by = "PSA",
+        certification = 9865649741,
+        card_id=cards[0].id       
+    ),
+    Grading(
+        score = 10,
+        graded_by = "Beckett",
+        certification = 5951654565,
+        card_id=cards[1].id        
+    )
+    ] 
+    db.session.add_all(gradings)
+    db.session.commit()
+
+    #collections
     collections = [
         Collection (
         collection_name = " Japanese pokemon card sets"   
@@ -73,20 +95,7 @@ def db_seed():
     db.session.add_all(collections)
     db.session.commit()
 
-    gradings = [
-        Grading(
-        score = 9,
-        graded_by = "PSA",
-        certification = 9865649741        
-    ),
-    Grading(
-        score = 10,
-        graded_by = "Beckett",
-        certification = 5951654565       
-    )
-    ] 
-    db.session.add_all(gradings)
-    db.session.commit()
+    
 
     print("Database seeded")
 
