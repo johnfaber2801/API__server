@@ -35,8 +35,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        #return new user                                  # 201 creation successful
-        return UserSchema(exclude=['password','id']).dump(user), 201
+        #return new user                                          # 201 creation successful
+        return UserSchema(exclude=['password','id','cards','is_admin']).dump(user), 201
                         #password and ID wont be retrieved to new users
     except IntegrityError as e:
         # Check if the error is due to duplicate email
@@ -59,7 +59,7 @@ def login():
         #create a JWT token
         token = create_access_token(identity=user.id,expires_delta=timedelta(hours=12))
         #return the JWT token
-        return {'token': token, 'user':UserSchema(exclude=['password','cards']).dump(user)}
+        return {'token': token, 'user':UserSchema(exclude=['password','cards','is_admin']).dump(user)}
     else:
         return {'error': 'invalid email or password'},401
     

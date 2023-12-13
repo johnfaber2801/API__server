@@ -35,7 +35,7 @@ def one_card(id):
 @jwt_required()
 def create_card():
     card_info =  CardSchema(exclude=['id','date']).load(request.json)
-    # using .get to add empty fields for values that are not mandatoryq
+    # using .get to add empty fields for values that are not mandatory
     card = Card(
         name = card_info['name'],
         type = card_info.get('type'),
@@ -49,7 +49,7 @@ def create_card():
     #print(card.__dict__)
     db.session.add(card)
     db.session.commit()
-    return CardSchema().dump(card), 201
+    return CardSchema(exclude=['user']).dump(card), 201
 
 #update pokemon card
 @cards_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
