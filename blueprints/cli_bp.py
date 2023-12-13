@@ -39,9 +39,9 @@ def db_seed():
     cards = [
          Card(
             name = "Charizard #1",
-            type = "fire",
+            type = "Fire",
             set = "25th Anniversary promo",
-            condition= "near mint",
+            condition= "Graded",
             quantity = 1,
             purchased_price = 180,
             market_price = 195,
@@ -51,9 +51,9 @@ def db_seed():
 
           Card(
             name = "Imposter Professor Oak #4",
-            type = "Trainer",
+            type = "Normal",
             set = "25th Anniversary promo",
-            condition= "Little played",
+            condition= "Graded",
             quantity = 1,
             purchased_price = 4,
             market_price = 5.5,
@@ -74,7 +74,7 @@ def db_seed():
     ),
     Grading(
         score = 10,
-        graded_by = "Beckett",
+        graded_by = "BECKETT",
         certification = 5951654565,
         card_id=cards[1].id        
     )

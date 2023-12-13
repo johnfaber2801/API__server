@@ -10,6 +10,8 @@ app.register_blueprint(users_bp)
 app.register_blueprint(cards_bp)
 app.register_blueprint(gradings_bp)
 
+print( app.url_map) #will show all the routes with their maps in the terminal
+
 
 
 

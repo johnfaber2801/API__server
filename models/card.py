@@ -1,6 +1,10 @@
 from setup import db, ma
 from datetime import datetime
 from marshmallow import fields
+from marshmallow.validate import OneOf
+
+VALID_POKEMON_TYPES = ( 'Normal', 'Fire', 'Water', 'Grass', 'Flying', 'Fighting', 'Poison', 'Electric', 'Ground', 'Rock', 'Psychic', 'Ice', 'Bug', 'Ghost', 'Steel', 'Dragon', 'Dark', 'Fairy')
+VALID_CARD_CONDITION_TYPES = ('Mint', 'Near Mint', 'lightly Played', 'Moderately Played', 'Heavily Played ', 'Damaged', 'Graded')
 
 class Card(db.Model):
     # define the table name for the db
@@ -11,9 +15,9 @@ class Card(db.Model):
 
     # rest of the attributes.
     name = db.Column(db.String(), nullable= False)
-    type = db.Column(db.String())
+    type = db.Column(db.String(), nullable= False)
     set = db.Column(db.String())
-    condition= db.Column(db.String())
+    condition= db.Column(db.String(), nullable= False)
     quantity = db.Column(db.Integer(), nullable= False)
     purchased_price = db.Column(db.Integer())
     market_price = db.Column(db.Integer())
@@ -32,8 +36,11 @@ class Card(db.Model):
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class CardSchema(ma.Schema):
     #grading = fields.Nested('GradingSchema', exclude=['card_id'], many=True)###3333333333
-
     user = fields.Nested('UserSchema', exclude=['password', 'is_admin'])###3333333333
-#relationship    #tell marsmallows to pass as well the entire "UserSchema"
+
+    type = fields.String(validate=OneOf(VALID_POKEMON_TYPES))
+    contidion = fields.String(valid=OneOf(VALID_CARD_CONDITION_TYPES))
+
+   #tell marsmallows to pass as well the entire "UserSchema"
     class Meta:                                                                                  #user object from the nested
         fields = ('id', 'name', 'type', 'set', 'condition','quantity', 'purchased_price','market_price', 'date','user', 'grading')
