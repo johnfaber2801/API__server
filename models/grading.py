@@ -11,12 +11,13 @@ class Grading(db.Model):
     graded_by = db.Column(db.String(), nullable=False)
     certification = db.Column(db.String(), nullable=False)
 
- # ForeignKey to relate Grading to Card 333333333333333333333333333
+ # ForeignKey to relate Grading to Card 
     card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
     card = db.relationship('Card', back_populates='grading')
 
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class GradingSchema(ma.Schema):
+    card = fields.Nested('CardSchema', only=['name'])
     class Meta:
-        fields = ('id', 'score', 'graded_by', 'certification','card_id')
-                                                                ########
+        fields = ('id', 'score', 'graded_by', 'certification','card')
+                                                               

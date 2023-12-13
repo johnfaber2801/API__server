@@ -14,7 +14,7 @@ def all_cards():
     #then querying in the database to match
     stmt= db.select(Card).filter_by(user_id=user_id)
     cards = db.session.scalars(stmt).all()
-    return CardSchema(many=True, exclude=['user.cards']).dump(cards)
+    return CardSchema(many=True, exclude=['user.cards','user']).dump(cards)
                                  # "dump" will return the fields in JSON format   
 
 
@@ -26,7 +26,7 @@ def one_card(id):
     stmt = db.select(Card).filter_by(id=id, user_id=user_id) # .where(Card.id == id)
     card = db.session.scalar(stmt)
     if card:
-        return CardSchema().dump(card)
+        return CardSchema(exclude=['user']).dump(card)
     else:
         return { 'error' : 'Card not found or does not belong to the user' },404
     

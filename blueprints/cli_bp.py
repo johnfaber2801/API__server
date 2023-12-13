@@ -2,7 +2,6 @@ from flask import Blueprint
 from setup import db, bcrypt
 from models.user import User
 from models.grading import Grading
-from models.collection import Collection
 from models.card import Card
 from datetime import date
 
@@ -35,7 +34,6 @@ def db_seed():
 
     db.session.add_all(users)
     db.session.commit()
-    #db.session.add(user2)
 
     # cards 
     cards = [
@@ -50,7 +48,6 @@ def db_seed():
             date = date.today(),
             user_id = users[0].id
         ),
-    # db.session.add(card1)
 
           Card(
             name = "Imposter Professor Oak #4",
@@ -64,7 +61,6 @@ def db_seed():
             user_id = users[1].id
         )
     ]
-    # db.session.add(card2)
     db.session.add_all(cards)
     db.session.commit()
 
@@ -85,17 +81,7 @@ def db_seed():
     ] 
     db.session.add_all(gradings)
     db.session.commit()
-
-    #collections
-    collections = [
-        Collection (
-        collection_name = " Japanese pokemon card sets"   
-    )
-    ]
-    db.session.add_all(collections)
-    db.session.commit()
-
-    
+  
 
     print("Database seeded")
 
