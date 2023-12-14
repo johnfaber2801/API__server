@@ -29,18 +29,20 @@ class Card(db.Model):
 
     #SQLAlchemy relantionship- nests an instance of a related model in this one
     user = db.relationship('User', back_populates= 'cards')
-                           #model     #tellin alchemy that this relationship is related to "cards" relationshi in User model
+                            #tellin alchemy that this relationship is related to "cards" relationshi in User model
     
-    grading = db.relationship('Grading', back_populates='card')#, uselist=False)#333333333
-    
+    grading = db.relationship('Grading', back_populates='card',  cascade='all, delete-orphan')
+                                                                 #will delete user and associated cards.
+
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)
 class CardSchema(ma.Schema):
     #grading = fields.Nested('GradingSchema', exclude=['card_id'], many=True)###3333333333
     user = fields.Nested('UserSchema', exclude=['password', 'is_admin'])###3333333333
+    grading = fields.Nested('GradingSchema', exclude=['card'])  # Exclude the circular reference
 
     type = fields.String(validate=OneOf(VALID_POKEMON_TYPES))
-    contidion = fields.String(valid=OneOf(VALID_CARD_CONDITION_TYPES))
+    contidion = fields.String(validate=OneOf(VALID_CARD_CONDITION_TYPES))
 
    #tell marsmallows to pass as well the entire "UserSchema"
     class Meta:                                                                                  #user object from the nested
-        fields = ('id', 'name', 'type', 'set', 'condition','quantity', 'purchased_price','market_price', 'date','user', 'grading')
+        fields = ('id', 'name', 'type', 'set', 'condition','quantity', 'purchased_price','market_price', 'date','user')

@@ -5,11 +5,12 @@ from flask_jwt_extended import create_access_token, jwt_required
 from datetime import timedelta
 from sqlalchemy.exc import IntegrityError
 from models.user import User, UserSchema
+from models.grading import Grading, GradingSchema
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
 
-# Get all users
+# Get all users with their cards
 @users_bp.route('/')
 @jwt_required()
 def all_users():
@@ -17,7 +18,16 @@ def all_users():
     stmt= db.select(User)# select all cards from User Model
     users = db.session.scalars(stmt).all()
     return UserSchema(many=True,exclude=['password']).dump(users)
-                                 # "dump" will return the fields in JSON format                           
+                                 # "dump" will return the fields in JSON format
+
+#get all graded cards per user
+@users_bp.route('/all_gradings')
+@jwt_required()
+def all_gradings():
+    admin_required()
+    stmt= db.select(Grading)# select all gradings from grading Model
+    gradings = db.session.scalars(stmt).all()
+    return GradingSchema(many=True).dump(gradings)                           
 
 # register new users 
 @users_bp.route('/register', methods=['POST'])
@@ -63,5 +73,22 @@ def login():
     else:
         return {'error': 'invalid email or password'},401
     
+    
+# Delete one user and associated cards and gradings
+@users_bp.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(id):
+    admin_required()
+    user = User.query.get(id)
+    if user:
+       
+        for card in user.cards:
+            db.session.delete(card)
+
+        db.session.delete(user)
+        db.session.commit()
+        return {'success': 'User and associated cards were deleted'}, 200
+    else:
+        return {'error': 'User details not found'}, 404
 
 

@@ -15,7 +15,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    cards = db.relationship('Card', back_populates='user')
+    cards = db.relationship('Card', back_populates='user',  cascade='all, delete-orphan')
                              #model     #tellin alchemy that this relationship is related to "user" relationship in User model
     
 #Use marshmallow to serialize the fields in the model ( we can chooce the fields that we want)

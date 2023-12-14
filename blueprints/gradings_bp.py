@@ -10,7 +10,7 @@ gradings_bp = Blueprint('gradings', __name__, url_prefix='/gradings')
 @gradings_bp.route('/')
 @jwt_required()
 def all_gradings():
-    # getting the Jwt towen from log in
+    # getting the Jwt token from log in
     user_id = get_jwt_identity() 
     # Query cards owned by the user
     user_cards = Card.query.filter_by(user_id=user_id).all()
@@ -18,8 +18,7 @@ def all_gradings():
     card_ids = [card.id for card in user_cards]
     # Query gradings associated with those card IDs
     user_gradings = Grading.query.filter(Grading.card_id.in_(card_ids)).all()
-    #stmt= db.select(Grading).filter_by(user_id=user_id) # select all users from Grading Model
-   #gradings = db.session.scalars(stmt).all()
+    
     return GradingSchema(many=True).dump(user_gradings)
                                  # "dump" will return the fields in JSON format 
 
@@ -57,24 +56,50 @@ def create_grading_for_card(card_id):
 @gradings_bp.route('/<int:id>')
 @jwt_required()
 def one_graded_card(id):
-    stmt = db.select(Grading).filter_by(id=id) 
-    card = db.session.scalar(stmt)
+    user_id = get_jwt_identity()
+    stmt = db.select(Grading).filter(Grading.id == id, Grading.card.has(Card.user_id == user_id)) 
+    card = db.session.scalar(stmt) 
     if card:
         return GradingSchema().dump(card)
     else:
         return { 'error' : 'Graded card not found' },404
     
 
-#delete one grading
+# Update graded card
+@gradings_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+def update_graded_card(id):
+    user_id = get_jwt_identity()
+    grading_info = GradingSchema(exclude=['id']).load(request.json)
+    stmt = db.select(Grading).filter((Grading.id == id), (Grading.card.has(Card.user_id == user_id)))
+    grading = db.session.scalar(stmt)
+
+    if grading:  # If the grading entry is found
+        grading.score = grading_info.get('score', grading.score)
+        grading.graded_by = grading_info.get('graded_by', grading.graded_by)
+        grading.certification = grading_info.get('certification', grading.certification)
+
+        db.session.commit()
+        return GradingSchema().dump(grading)
+    else:
+        return {'error': 'Grading not found'}, 404
+
+    
+
+# Delete one grading
 @gradings_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
-def delete_card(id):
-    stmt = db.select(Grading).filter_by(id=id) 
-    card = db.session.scalar(stmt)
-    if card:
-        db.session.delete(card)
+def delete_grading(id):
+    user_id = get_jwt_identity()
+    stmt = db.select(Grading).filter((Grading.id == id), (Grading.card.has(Card.user_id == user_id))) 
+    grading = db.session.scalar(stmt)
+    
+    if grading:
+        db.session.delete(grading)
         db.session.commit()
-        return { 'success' : 'Grading was deleted'},200
+        return { 'success' : 'Grading was deleted'}, 200
     else:
-        return { 'error' : ' Graded card details not found' },404
+        return { 'error' : 'Grading details not found or unauthorized' }, 404
+
+
 

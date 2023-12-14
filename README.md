@@ -95,4 +95,135 @@ ORMs offers Schema management that helps defining structure and organization of 
 
 - Description: Allow users to add grading details to an existing Pokemon Card if required.
 
-1[graded added](./docs/grading%20added%20to%20existing%20card%20route.png)
+![graded added](./docs/grading%20added%20to%20existing%20card%20route.png)
+
+5. / update details in a existing Pokemon Card
+
+- HTTP method: **PUT, PATCH**
+
+- Required data: card_id 
+
+- Expected JSON response data: Expected '200 OK' response. JSON response is the card of the user with all information including updated information.
+
+- Authentication methods: JWT token to update cards owned by the user. otherwise the user will be prompted with error message.
+
+- Description: Allow users to update cards owned by the user
+
+![Update card](./docs/Update%20card%20route.png)
+
+6. / get all cards from user
+
+- HTTP method: **GET**
+
+- Required data: NONE
+
+- Excepted JSON response data: Expected ' 200 ok' response. JSON response will display all cards owned by the user.
+
+- Authentication method: JWT token, JWT identity.
+
+- Description: Allow users to display cards owned by the user.
+
+![get all cards user](./docs/get%20all%20cards%20route.png)
+
+7. /get all gradings user
+
+- HTTP method: **GET**
+
+- Required data: NONE
+
+- Expected JSON response: Excpted '200 OK' response. JSON response will display grading details for each pokemon card.
+
+- Authentication method: JWT token, JWT identity
+
+- Description: Allow users to retrieve gradings for existing cards.
+
+![get all gradings user](./docs/get%20all%20gradings%20route.png)
+
+8./ get only one grading
+
+- HTTP method: **GET**
+
+- Required data: grading id
+
+- Expected JSON response: Expected '200 ok' response. JSON response will display the grading details of specified grading.
+
+- Authentication method: JWT token , JWT identity, and grading id
+
+- Description: Allows access to an specific grading details of a card.
+
+![get only one grading](./docs/retrieve%20only%20one%20graded%20card.png)
+
+9. / update one grading
+
+- HTTP METHOD: **PUT**
+
+- Required data: grading id
+
+- Expected JSON response: Expected '200 OK' response. JSON will display the grading details with new updates.
+
+- Authentication Method: JWT token, JWT identity
+
+- Description:Allows updating of grading details for an existing grading.
+
+![et only one grading](./docs/updating%20one%20grading.png)
+
+10. / Admin get all users with their cards
+
+- HTTP METHOD: **GET**
+
+- Required data: none
+
+- Excpeted JSON response: Expected '200 ok" response. JSON will display all users with their information with their cards.
+
+- Authentication method: Admin JWT token
+
+-  Description: admin retrieves information from all users with their cards details.
+
+![admin get all users](./docs/admin%20get%20all%20users.png)
+
+11. / Admin get all gradings from all users
+
+- HTTP METHOD: **GET**
+
+- required data: none
+
+- Excpeted JSON response: Expected '200 ok" response. JSON will display all gradings with their information with only the name of the card.
+
+- Authentication method: Admin JWT token
+
+- Description: admin retrieves information from all gradingsfrom all users.
+
+![admin get all gradings](./docs/admin%20get%20all%20gradings.png)
+
+12. / admin deletes an user 
+
+- HTTP METHOD: **DELETE**
+
+- required data: user id
+
+- Excpeted JSON response: Expected '200 ok" response. JSON will display a message of success in deletion of users and associated cards.
+
+- Authentication method: Admin JWT token
+
+- Description: admin deletes user and associated cards
+
+![admin delete user](./docs/admin%20delete%20users.png)
+
+13. / User deletes a grading
+
+- HTTP METHOD: **DELETE**
+
+- required data: grading id
+
+- Excpeted JSON response: Expected '200 ok" response. JSON will display a message of success in deletion of grading
+
+- Authentication method: user JWT token
+
+- Description: user deletes only one specific grading.
+
+![admin delete user](./docs/user%20delete%20grading.png)
+
+
+
+
+

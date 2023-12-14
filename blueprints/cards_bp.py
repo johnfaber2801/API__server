@@ -14,7 +14,7 @@ def all_cards():
     #then querying in the database to match
     stmt= db.select(Card).filter_by(user_id=user_id)
     cards = db.session.scalars(stmt).all()
-    return CardSchema(many=True, exclude=['user.cards','user']).dump(cards)
+    return CardSchema(many=True, exclude=['user']).dump(cards)
                                  # "dump" will return the fields in JSON format   
 
 
@@ -67,7 +67,7 @@ def update_card(id):
         card.purchased_price = card_info.get('purchased_price', card.purchased_price)
         card.market_price = card_info.get('market_price', card.market_price)
         db.session.commit()       
-        return CardSchema().dump(card)
+        return CardSchema(exclude=['user']).dump(card)
     else:
         return { 'error' : 'Card not found' },404
     

@@ -22,7 +22,7 @@ class Grading(db.Model):
 class GradingSchema(ma.Schema):
     card = fields.Nested('CardSchema', only=['name'])
 
-    graded_by = fields.String(valid=OneOf(VALID_GRADING_COMPANIES))
+    graded_by = fields.String(validate=OneOf(VALID_GRADING_COMPANIES))
                               
     class Meta:
         fields = ('id', 'score', 'graded_by', 'certification','card')
