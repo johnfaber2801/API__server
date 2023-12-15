@@ -221,9 +221,115 @@ ORMs offers Schema management that helps defining structure and organization of 
 
 - Description: user deletes only one specific grading.
 
-![admin delete user](./docs/user%20delete%20grading.png)
+![grading deleted](./docs/user%20delete%20grading.png)
+
+14. / User deletes a grading
+
+- HTTP METHOD: **DELETE**
+
+- required data: card id
+
+- Excpeted JSON response: Expected '200 ok" response. JSON will display a message of success in deletion of pokemon card
+
+- Authentication method: user JWT token 
+
+- Description: user deletes only one specific grading.
+
+![grading deleted](./docs/delete%20one%20card%20user.png)
 
 
+## R6 An ERD for your app
+
+The application's Entity Relationship Diagram (ERD) comprises three entities: users, cards, and gradings. Here are the key relations and attributes for each entity:
+
+1. Users-Cards Relation:
+Users can possess zero or many cards.
+Each card is associated with only one user.
+
+2. Cards-Grading Relation:
+Cards can have only one grading or none.
+Each grading is associated with only one card.
 
 
+![ERD](./docs/ERD.png)
 
+## R7 Detail any third party services that your app will use
+
+1.	**Bcrypt**
+
+Bcrypt is a password hashing algorithm designed by Niels Provos and David Mazières based on the Blowfish cipher. Bcrypt is one of the most secure passwords hashing algorithms available, and it is widely used in web applications and other software that stores passwords. (Bcrypt)
+2.	**Flask**
+It is a web framework written in python. Very popular choice for web developing and APIs thanks to his simple design and usability. Flask is categorized within microframeworks, providing essential web development components without enforcing a rigid structure or excessive features. (Gringberg,2023)
+3.	**JWT Manager**
+A JWT (JSON Web Token) Manager is a component or library that facilitates the creation, encoding, decoding, and verification of JWTs in the context of web application development. JWT is commonly used for authentication and information exchange in stateless, distributed systems.
+4.	**Marshmallow**
+Marshmallow is a data serialization library that facilitates the conversion of complex data structures into simpler data formats like JSON or Python dictionaries. It simplifies data handling for web applications by streamlining the process of sending and receiving data between the application and the client. (Marshmallow,2023)
+5.	**Psycopg2**
+Psycopg2 simplifies the process of connecting to, establishing, and managing PostgreSQL databases. It serves as a PostgreSQL client interface, enabling developers to execute SQL queries, retrieve data, and manage database operations.
+6.	**PostgreSQL**
+Relational Database Management System (RDBMS) and object-relational database system following the relational model. It features inheritance and polymorphism. This makes it possible to model complex data relationships and behaviour more effectively. (Grosu. A,2023)
+7.	**SQL Alchemy**
+SQLAlchemy is a Python SQL toolkit and object-relational mapper (ORM). It allows to access and manage SQL databases using a Pythonic domain language, without having to write raw SQL queries. (SQLAlchemy,2023)
+
+
+## R8 Describe your projects models in terms of the relationships they have with each other
+
+User model represents users in the database, and it establishes an one-to-many relationship with the Card model, allowing each user to be associated with multiple cards. The 'delete-orphan' option ensures that orphaned Card records are deleted.
+
+```python
+class User(db.Model):
+   
+    __tablename__= "users"
+
+    id = db.Column(db.Integer,primary_key=True)
+
+    email = db.Column(db.String, nullable=False, unique=True)
+    username = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    cards = db.relationship('Card', back_populates='user',  cascade='all, delete-orphan')
+```
+
+Card model represents information about Pokémon cards and establishes relationships with both the User and Grading models. user_id attribute is a foreign key that establishes a many-to-one relationship between the Card and User models. The user attribute provides a way to access the user associated with a particular card, and the grading attribute provides a way to access grading information associated with a card.  The 'delete-orphan' option ensures that orphaned Grading records are deleted.
+
+```python
+class Card(db.Model):
+    __tablename__= "cards"
+
+    id = db.Column(db.Integer,primary_key=True)
+
+    name = db.Column(db.String(), nullable= False)
+    type = db.Column(db.String(), nullable= False)
+    set = db.Column(db.String())
+    condition= db.Column(db.String(), nullable= False)
+    quantity = db.Column(db.Integer(), nullable= False)
+    purchased_price = db.Column(db.Integer())
+    market_price = db.Column(db.Integer())
+    date = db.Column(db.Date(), default=datetime.now().strftime('%Y-%m-%d'))
+
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', back_populates= 'cards')
+                           
+    grading = db.relationship('Grading', back_populates='card',  cascade='all, delete-orphan')
+```
+
+the Grading model represents information about the grading of Pokémon cards and establishes a many-to-one relationship with the Card model. The card attribute provides a way to access the card associated with a particular grading.
+
+```python
+
+class Grading(db.Model):
+
+    __tablename__= "gradings"
+   
+    id = db.Column(db.Integer,primary_key=True)
+   
+    score = db.Column(db.String(), nullable=False)
+    graded_by = db.Column(db.String(), nullable=False)
+    certification = db.Column(db.String(), nullable=False)
+
+    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
+    card = db.relationship('Card', back_populates='grading')
+```
+
+The three models create a relational structure where users can be associated with multiple cards, each card can have multiple gradings, and each grading is linked to a specific card.

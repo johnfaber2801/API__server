@@ -56,7 +56,7 @@ def create_card():
 @jwt_required()
 def update_card(id):
     card_info =  CardSchema(exclude=['id','date']).load(request.json)
-    stmt = db.select(Card).filter_by(id=id) # .where(Card.id == id)
+    stmt = db.select(Card).filter_by(id=id)
     card = db.session.scalar(stmt)
     if card:  # if field is not updated, it will keep the existing one
         card.name = card_info.get('name', card.name)
@@ -76,7 +76,8 @@ def update_card(id):
 @cards_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_card(id):
-    stmt = db.select(Card).filter_by(id=id) # .where(Card.id == id)
+    user_id = get_jwt_identity()  
+    stmt = db.select(Card).filter_by(id=id, user_id=user_id) 
     card = db.session.scalar(stmt)
     if card:
         db.session.delete(card)
