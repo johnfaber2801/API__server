@@ -4,11 +4,8 @@
 
 ## [Github Project board](https://github.com/users/johnfaber2801/projects/3/views/1?layout=roadmap)
 
-## ERD
+## [ERD](#an-erd-for-your-app)
 
-Table of Contents
-
-- Pokemon Card Tracker Web Server API Documentation.
 
 ## R1 and R2 Problem Identification and Justification
 
@@ -32,7 +29,7 @@ Cassandra schemas are flexible, its dynamic data structure facilitates the addit
 Cassandra shines at handling large volumes of unstructured or semi-structured data, particularly in terms of write throughput and scalability. PostgreSQL drawback handling large volumes of unstructured or semi-structured data can impact query performance. (DataStax, 2023)
 PostgreSQL benefits of full ACID transaction support, ensuring data consistency and integrity. Cassandra supports lightweight transactions, but it's not designed for applications requiring strong ACID guarantees. For applications requirements of a strict transactional consistency, PostgreSQL is a better choice for our application. ( DataStax, 2023)
 
-## R4  Identify and discuss the key functionalities and benefits of an ORM
+## R4 Identify and discuss the key functionalities and benefits of an ORM
 
 Object-relational mapper (ORM) brings an object-oriented layer between relational databases and object-oriented programming (OOP) without having to write SQL queries. OOP uses objects within classes to model and organize code, and relational databases organize data into tables with rows and columns. This project will utilize SQLAlchemy, a widely adopted Python SQL toolkit and ORM, offering application developers comprehensive control and adaptability relating to SQL functionality. (Liang, 2021).
 The advantages of using an ORM lies in productivity, achieved through the simplification of database interactions. By employing Python objects and methods, developers can perform operations on the database without the need to write SQL queries directly. Built-in CRUD methods further enhance this efficiency, streamlining the process of managing Pokemon cards within the tracker. Entities (user, cards, purchases) are represented as python objects, The ORM leverages relationships to establish connections and associations between these entities, facilitating the coherent representation and interaction of data. (Liang, 2021).
@@ -258,16 +255,22 @@ Each grading is associated with only one card.
 1.	**Bcrypt**
 
 Bcrypt is a password hashing algorithm designed by Niels Provos and David Mazières based on the Blowfish cipher. Bcrypt is one of the most secure passwords hashing algorithms available, and it is widely used in web applications and other software that stores passwords. (Bcrypt)
+
 2.	**Flask**
 It is a web framework written in python. Very popular choice for web developing and APIs thanks to his simple design and usability. Flask is categorized within microframeworks, providing essential web development components without enforcing a rigid structure or excessive features. (Gringberg,2023)
+
 3.	**JWT Manager**
 A JWT (JSON Web Token) Manager is a component or library that facilitates the creation, encoding, decoding, and verification of JWTs in the context of web application development. JWT is commonly used for authentication and information exchange in stateless, distributed systems.
+
 4.	**Marshmallow**
 Marshmallow is a data serialization library that facilitates the conversion of complex data structures into simpler data formats like JSON or Python dictionaries. It simplifies data handling for web applications by streamlining the process of sending and receiving data between the application and the client. (Marshmallow,2023)
+
 5.	**Psycopg2**
 Psycopg2 simplifies the process of connecting to, establishing, and managing PostgreSQL databases. It serves as a PostgreSQL client interface, enabling developers to execute SQL queries, retrieve data, and manage database operations.
+
 6.	**PostgreSQL**
 Relational Database Management System (RDBMS) and object-relational database system following the relational model. It features inheritance and polymorphism. This makes it possible to model complex data relationships and behaviour more effectively. (Grosu. A,2023)
+
 7.	**SQL Alchemy**
 SQLAlchemy is a Python SQL toolkit and object-relational mapper (ORM). It allows to access and manage SQL databases using a Pythonic domain language, without having to write raw SQL queries. (SQLAlchemy,2023)
 
@@ -333,3 +336,39 @@ class Grading(db.Model):
 ```
 
 The three models create a relational structure where users can be associated with multiple cards, each card can have multiple gradings, and each grading is linked to a specific card.
+
+
+## R9 Discuss the database relations to be implemented in your application
+
+This project used a database named **'pokemon_db'**, it was created in PostgreSQL, and contains 3 tables users, cards, and gradings.
+
+The **User** table includes four attributes: email, username, password, and is_admin. All attributes except is_admin are marked as NOT NULL, preventing the registration of duplicate users. This configuration ensures authentication and uniqueness for each account. An admin account has been established to control over the database, managing user accounts and their collections.The table serves as the primary table for user-related data.
+
+The **cards** table contains eight attributes: name, type, description, set, quantity,purcharsed_price, market_price, currency,and date. Among them, only four attributes (name, type, condition, quantity) are designated as NOT NULL, prioritizing the essential characteristics of Pokémon cards. The table establishes a foreign key linking to the primary table (users), ensuring that every card is associated with an owner. This relationship enforces the condition that a card can only be created if a corresponding user exists. In addition, the attributes **type** and **condition** are subject to validation using predefined lists( ```python type = fields.String(validate=OneOf(VALID_POKEMON_TYPES))```,```python condition = fields.String(validate=OneOf(VALID_CARD_CONDITION_TYPES))```) in order to add data consistency to the table  predefining Pokémon card types and condition types.
+
+the **gradigns** table contains three attributes: score, graded_by, and certification. All atributes are marked NOT NULL to avoid duplicates.This table holds the most valuable information as single cards could 10x on price once graded, it makes them very tradeable and very often treated as investments. This table contains a foreign key to the cards table, it enforces the condition that a grading can only be created if a corresponding card exists. In addition, the attribute **graded_by** is subject to validation using a predefined list ```pythongraded_by = fields.String(validate=OneOf(VALID_GRADING_COMPANIES))```, in order to add data consistency to the table predefining grading compnay information.
+
+The relationships between tables enforce ownership, association, and data consistency, demonstrating a foundation for managing user accounts, Pokémon cards, and valuable grading information.
+
+
+
+
+
+## R10 Describe the way tasks are allocated and tracked in your project
+
+The API server project was tracked using **GitHub Projects**, this project management tool allowed me to manage tasks for 2 weeks in a very organized way. Tasks were categorized in the "Todo" section, enabling planning for both documentation and code. The initial tasks were moved to the "In Progress" section, indicating active work, and subsequently to the "Done" section upon completion.
+
+The code implementation phase, being the most time-consuming, was strategically divided into manageable pieces. This approach granted me control and organization, allowing for a successful API development without starting from the endpoint.
+
+The time management was greatly handled, balancing academic commitments and work responsibilities, played a crucial role. I was able to assign tasks per day to be as efficient as possible. During my days off I got the most of the tasks done. Find below a screenshot of the timeline that illustrates peak productivity during these dedicated periods.
+
+![timeline](./docs/Project%20Timeline.png)
+
+Additionally, in the Coder Academy Discord, I regularly provided daily work progress updates in the #Standups section. While the project was undertaken individually, the collective posting within the channel provided a sense of work as a group , offering valuable insights and collaboration opportunities.
+
+![standups](./docs/standups.png)
+![standups 2](./docs/standups%202.png)
+
+Finally, the project was executed using GitHub for version control. I tracked my progress through Git commits, managed my main branch to facilitate development, and revisited the main codebase for updates.
+
+![commits](./docs/commits.png)

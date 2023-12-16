@@ -41,7 +41,7 @@ class CardSchema(ma.Schema):
     grading = fields.Nested('GradingSchema', exclude=['card'])  # Exclude the circular reference
 
     type = fields.String(validate=OneOf(VALID_POKEMON_TYPES))
-    contidion = fields.String(validate=OneOf(VALID_CARD_CONDITION_TYPES))
+    condition = fields.String(validate=OneOf(VALID_CARD_CONDITION_TYPES))
 
    #tell marsmallows to pass as well the entire "UserSchema"
     class Meta:                                                                                  #user object from the nested
