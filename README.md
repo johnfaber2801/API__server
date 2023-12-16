@@ -4,7 +4,7 @@
 
 ## [Github Project board](https://github.com/users/johnfaber2801/projects/3/views/1?layout=roadmap)
 
-## [ERD](#an-erd-for-your-app)
+## [ERD](#r6-an-erd-for-your-appan-erd-for-your-app)
 
 
 ## R1 and R2 Problem Identification and Justification
@@ -372,3 +372,29 @@ Additionally, in the Coder Academy Discord, I regularly provided daily work prog
 Finally, the project was executed using GitHub for version control. I tracked my progress through Git commits, managed my main branch to facilitate development, and revisited the main codebase for updates.
 
 ![commits](./docs/commits.png)
+
+## Bibliography
+
+1.	Grosu, A. (2023) 'SQL: Mastering Relational Database Management and Querying', Medium. Available at: https://medium.com/@alexandragrosu03/sql-masteringrelational-database-management-and-querying-42dbdf88e861 (Accessed: 03 December 2023).
+
+2.	Elizabeth, S. (2023) 'Entity Relationship Diagrams — An Explanation', Medium. Available at: https://medium.com/@elizabethskachkov/entity-relationship-diagrams-anexplanation-1c478499b77f (Accessed: 03 December 2023).
+
+3.	Hevo Data Inc. (2022) 'Relational Database Vs NoSQL: 7 Critical Aspects', Hevo Data. Available at: https://hevodata.com/learn/relational-database-vs-nosql/ (Accessed: 03 December 2023).
+
+4.	Liang, M. (2021) 'Understanding Object-Relational Mapping: Pros, Cons, and Types', Altexsoft. Available at: https://www.altexsoft.com/blog/object-relational-mapping/ (Accessed: 04 December 2023).
+
+5.	Barnes, J.M., (2007) Object-relational mapping as a persistence mechanism for object-oriented applications.
+
+6.	DataStax. (2023) A Comprehensive Comparison by DataStax. Available at:  https://www.yugabyte.com/blog/data-modeling-basics-postgresql-vs-cassandra-vs-mongodb/ (Accessed: 06 December 2023)
+
+7.	Grinberg, Miguel. "Basic Flask." *Learn Python*.  Available at: https://www.learnpython.dev/03-intermediate-python/80-web-frameworks/basic-flask/ (Accessed: 06 December 2023).
+
+8.	SQLAlchemy Documentation. [Online]. Available at: https://docs.sqlalchemy.org/: https://docs.sqlalchemy.org/ (Accessed: 06 December 2023).
+
+9.	Marshmallow Documentation. [Online]. Available at: https://marshmallow.readthedocs.io/en/stable/index.html (Accessed: 06 December 2023).
+
+10.	Psycopg2 Documentation. [Online]. Available at: https://www.psycopg.org/docs/ (Accessed: 06 December 2023).
+
+11.	Bcrypt. [Online]. Available at: https://bcrypt.online/(Accessed: 06 December 2023).
+
+12.	JSON Web Token Introduction. [Online]. Available at: https://jwt.io/introduction (Accessed: 06 December 2023).
