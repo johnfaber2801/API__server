@@ -234,6 +234,20 @@ ORMs offers Schema management that helps defining structure and organization of 
 
 ![grading deleted](./docs/delete%20one%20card%20user.png)
 
+15. / User portfolio worth information
+
+- HTTP METHOD: **GET**
+
+- required data: NONE
+
+- Expected JSON response: Expected '200 ok" response. JSON will display a sum total of purchased price and market price of the entire cards collection.
+
+- Authentication method: user JWT token. 
+
+- Description: user gets an overall portfolio worth information.
+
+![portfolio](./docs/portfolio%20worth%20route.png)
+
 
 ## R6 An ERD for your app
 

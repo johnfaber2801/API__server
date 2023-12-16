@@ -51,6 +51,29 @@ def create_card():
     db.session.commit()
     return CardSchema(exclude=['user']).dump(card), 201
 
+from sqlalchemy import func
+
+#get portfolio worth details
+@cards_bp.route('/portfolio_worth')
+@jwt_required()
+def total_prices():
+    user_id = get_jwt_identity()
+
+    # Query the database to get the sum of purchase_price and market_price
+    stmt = db.select(func.sum(Card.purchased_price).label('total_purchase_price')).where(Card.user_id == user_id)
+    stmt2 = db.select(func.sum(Card.market_price).label('total_market_price')).where(Card.user_id == user_id)
+    total_purchase_price = db.session.scalar(stmt)
+    total_market_price = db.session.scalar(stmt2)
+
+    return {
+            'total_portfolio_worth': total_purchase_price or 0,
+            'total_market_worth': total_market_price or 0},200
+
+
+
+   
+
+
 #update pokemon card
 @cards_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
