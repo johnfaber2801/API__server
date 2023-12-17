@@ -1,8 +1,8 @@
 from flask import Blueprint
-from setup import db, bcrypt
-from models.user import User
-from models.grading import Grading
-from models.card import Card
+from src.setup import db, bcrypt
+from src.models.user import User
+from src.models.grading import Grading
+from src.models.card import Card
 from datetime import date
 
 #instance creation from blueprint

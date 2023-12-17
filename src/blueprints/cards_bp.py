@@ -1,6 +1,6 @@
 from flask import Blueprint, request
-from setup import db
-from models.card import Card, CardSchema
+from src.setup import db
+from src.models.card import Card, CardSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 cards_bp = Blueprint('cards', __name__, url_prefix='/cards')
@@ -70,8 +70,6 @@ def total_prices():
             'total_market_worth': total_market_price or 0},200
 
 
-
-   
 
 
 #update pokemon card

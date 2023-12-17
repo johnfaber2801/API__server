@@ -1,11 +1,11 @@
 from flask import Blueprint, request
-from setup import db, bcrypt
-from auth import admin_required
+from src.setup import db, bcrypt
+from src.auth import admin_required
 from flask_jwt_extended import create_access_token, jwt_required
 from datetime import timedelta
 from sqlalchemy.exc import IntegrityError
-from models.user import User, UserSchema
-from models.grading import Grading, GradingSchema
+from src.models.user import User, UserSchema
+from src.models.grading import Grading, GradingSchema
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -45,9 +45,9 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        #return new user                                          # 201 creation successful
+        #return new user                                         
         return UserSchema(exclude=['password','id','cards','is_admin']).dump(user), 201
-                        #password and ID wont be retrieved to new users
+                       
     except IntegrityError as e:
         # Check if the error is due to duplicate email
         if 'unique constraint' in str(e.orig) and 'email' in str(e.orig):
@@ -64,6 +64,7 @@ def login():
     #select user with email that matches the one in the POST body
     stmt = db.select(User).where(User.email==user_info['email'])
     user = db.session.scalar(stmt)  
+
     #check password hash #bcrypt will do the work for us of matching password from database and incoming one
     if user and bcrypt.check_password_hash(user.password, user_info['password']):
         #create a JWT token

@@ -1,7 +1,7 @@
 from flask import abort
-from setup import db
+from src.setup import db
 from flask_jwt_extended import get_jwt_identity
-from models.user import User
+from src.models.user import User
 
 
 #function to allow access to admin only
