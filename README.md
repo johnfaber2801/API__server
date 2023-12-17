@@ -4,7 +4,7 @@
 
 ## [Github Project board](https://github.com/users/johnfaber2801/projects/3/views/1?layout=roadmap)
 
-## [ERD](#r6-an-erd-for-your-appan-erd-for-your-app)
+## [ERD](#r6-an-erd-for-your-app)
 
 
 ## R1 and R2 Problem Identification and Justification
